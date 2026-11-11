@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive report on minimum flip sequences between plane spanning paths in convex point sets.">
+  <title>Minimum Flip Sequences | INFO-F420</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="navigation.js" defer></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-identity" aria-label="Course information">
+      <a class="course-code" href="#theory">INFO-F420</a>
+    </div>
+
+    <nav class="tabs" aria-label="Main navigation" role="tablist">
+      <button class="tab-button is-active" id="theory-tab" type="button" role="tab"
+        aria-selected="true" aria-controls="theory" data-tab="theory">Learn It</button>
+      <button class="tab-button" id="practice-tab" type="button" role="tab"
+        aria-selected="false" aria-controls="practice" data-tab="practice">Try It</button>
+    </nav>
+
+    <p class="student-name">Anwar Jabrazko</p>
+  </header>
+
+  <main>
+    <!-- ========================================================================= -->
+    <!-- ONGLET 01 : LEARN IT (THEORETICAL FOUNDATIONS)                             -->
+    <!-- ========================================================================= -->
+    <section class="tab-panel is-active" id="theory" role="tabpanel" aria-labelledby="theory-tab">
+      <div class="hero">
+        <p class="eyebrow">Computational Geometry · Pr. Stefan Langerman</p>
+        <h1>How many flips to transform one path into another ?</h1>
+        <p class="authors">A Linear Time Algorithm for Finding Minimum Flip Sequences between Plane Spanning Paths in Convex Point Sets | Oswin Aichholzer · Joseph Dorfer</p>
+      </div>
+
+      <article class="content-card report-content">
+
+        <div class="report-body">
+          <!-- SECTION 1 -->
+          <section class="report-section">
+            <h3>1. Problem Setting and Elementary Flips</h3>
+            <p>
+              In discrete geometry, reconfiguration problems study whether one geometric graph can be transformed into another through localized operations without violating structural properties such as planarity. In this project, we study the reconfiguration of <strong>plane spanning paths</strong> on point sets in convex position, based on the recent results by Aichholzer and Dorfer (EuroCG 2025).
+            </p>
+            <p>
+              Let $S = \{v_0, v_1, \dots, v_{n-1}\}$ be a set of $n$ points in the plane in strictly convex position, labeled in clockwise order around the boundary of their convex hull $\mathrm{Hull}(S)$.
+            </p>
+
+            <div class="math-box definition">
+              <span class="math-box-title">Definition 1 (Plane Spanning Path)</span>
+              <p>A <em>plane spanning path</em> is a non-crossing straight-line path visiting all $n$ vertices of $S$ using $n-1$ edges, such that every vertex has degree at most $2$.</p>
+            </div>
+
+            <p>
+              Edges connecting consecutive vertices on the cycle ($v_i$ and $v_{i+1 \pmod n}$) are called <strong>convex hull edges</strong> (or boundary edges). All other edges connecting non-consecutive vertices are internal chords, called <strong>diagonals</strong>.
+            </p>
+
+            <h4>Elementary Flips</h4>
+            <p>
+              A <em>flip</em> replaces an edge $e$ with a new edge $e'$ such that the resulting graph remains a valid plane spanning path. Following the characterization by Aichholzer et al. (WALCOM 2023), every valid flip falls into one of three geometric types:
+            </p>
+            <ul class="report-list">
+              <li><strong>Type 1 Flip:</strong> Removes an edge $(p_{i-1}, p_i)$ and inserts a non-crossing edge between an endpoint and an internal vertex (either $(p_1, p_i)$ or $(p_{i-1}, p_n)$). This reverses the intermediate subpath.</li>
+              <li><strong>Type 2 Flip:</strong> Adds an edge $(p_1, p_n)$ between both endpoints to close the cycle, and then removes an arbitrary edge elsewhere along the cycle.</li>
+              <li><strong>Type 3 Flip:</strong> Adds an edge $(p_1, p_n)$ that crosses <em>exactly one</em> existing edge $(p_{i-1}, p_i)$, which is then removed in the same operation.</li>
+            </ul>
+
+            <!-- Figure 1 -->
+            <figure class="report-figure">
+              <img src="figure1.png" alt="Illustration of Type 1, Type 2, and Type 3 flips">
+              <figcaption>Figure 1: The three elementary types of flips. (a) Type 1 reverses a subpath; (b) Type 2 closes a non-crossing cycle and opens it elsewhere; (c) Type 3 adds an edge crossing and replacing exactly one existing edge.</figcaption>
+            </figure>
+
+            <p>
+              Given an initial path $P_{\mathrm{in}}$ and a target path $P_{\mathrm{tar}}$, the <strong>flip distance</strong> $\mathrm{dist}(P_{\mathrm{in}}, P_{\mathrm{tar}})$ is the minimum number of flips needed to transform $P_{\mathrm{in}}$ into $P_{\mathrm{tar}}$. This corresponds to computing a shortest path in the underlying flip graph whose vertices are all valid paths.
+            </p>
+          </section>
+
+          <!-- SECTION 2 -->
+          <section class="report-section">
+            <h3>2. The Happy Edge Paradox (The 4-Vertex Trap)</h3>
+            <p>
+              In many graph reconfiguration problems, edges present in both the initial and target configurations are called <strong>happy edges</strong>. The intuitive <em>happy edge property</em> states that there should always exist an optimal reconfiguration sequence where shared edges are preserved and never removed. For triangulations and matchings, this property holds and allows greedy divide-and-conquer strategies.
+            </p>
+            <p>
+              A central discovery of Aichholzer and Dorfer is that <strong>the happy edge property fails for plane spanning paths</strong>.
+            </p>
+
+            <!-- Figure 2 -->
+            <figure class="report-figure">
+              <img src="figure2.png" alt="The 8-state flip graph on 4 convex vertices">
+              <figcaption>Figure 2: The complete flip graph of all 8 plane spanning paths on 4 vertices. $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$ share the diagonal $(v_0, v_2)$, but every transition path between them must temporarily destroy that shared diagonal.</figcaption>
+            </figure>
+
+            <p>
+              The authors provide a counterexample on only $n = 4$ vertices in convex position, where exactly $8$ valid plane spanning paths exist in total:
+            </p>
+            <ul class="report-list">
+              <li>$P_{\mathrm{in}} = (v_1, v_0, v_2, v_3)$, containing edges $(v_1, v_0)$, $(v_0, v_2)$, and $(v_2, v_3)$.</li>
+              <li>$P_{\mathrm{tar}} = (v_0, v_2, v_1, v_3)$, containing edges $(v_0, v_2)$, $(v_2, v_1)$, and $(v_1, v_3)$.</li>
+            </ul>
+            <p>
+              Both configurations share the internal diagonal $(v_0, v_2)$. However, as shown by inspecting the flip graph (Figure 2), $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$ cannot reach each other in a single flip, and none of the other six paths in the configuration space contains $(v_0, v_2)$. Consequently, <strong>every</strong> valid sequence of flips connecting $P_{\mathrm{in}}$ to $P_{\mathrm{tar}}$ must temporarily remove the shared diagonal and reintroduce it later. Greedy algorithms that attempt to preserve shared edges can thus lead to dead ends.
+            </p>
+          </section>
+
+          <!-- SECTION 3 -->
+          <section class="report-section">
+            <h3>3. The Key Insight: Good vs. Bad Happy Diagonals</h3>
+            <p>
+              To find shortest flip sequences without exploring the exponential flip graph, the authors study how diagonals behave under flips. Boundary edges are flexible, but diagonals rigidly partition the point set.
+            </p>
+
+            <div class="math-box lemma">
+              <span class="math-box-title">Lemma 3.1 (Aichholzer & Dorfer 2025)</span>
+              <p>A Type 1 flip either removes or adds a diagonal, but cannot do both simultaneously. If diagonals exist, we can always decrease the number of diagonals by adding a convex hull edge.</p>
+            </div>
+
+            <p>
+              Any diagonal $d = (v_i, v_j)$ with $i < j$ splits the convex point set into two subsets of vertices:
+              $$V_{\mathrm{left}} = \{v_{i+1}, \dots, v_{j-1}\} \quad \text{and} \quad V_{\mathrm{right}} = \{v_{j+1}, \dots, v_{n-1}\} \cup \{v_0, \dots, v_{i-1}\}$$
+            </p>
+            <p>
+              In a plane spanning path containing $d$, the edges adjacent to its endpoints are constrained to emanate into one of the two regions defined by $d$. Comparing these local orientations between $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$ determines whether a shared diagonal can be preserved:
+            </p>
+
+            <div class="math-box definition">
+              <span class="math-box-title">Definition 2 (Good vs. Bad Happy Diagonals)</span>
+              <p>Let $d = (v_i, v_j)$ be a happy diagonal shared by $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$:</p>
+              <ul class="report-list">
+                <li>$d$ is a <strong>good happy diagonal</strong> if the two paths continue from its endpoints with the same local orientation (their adjacent edges emanate into the same cyclic subset of vertices).</li>
+                <li>$d$ is a <strong>bad happy diagonal</strong> if the initial and target paths continue on opposite sides of $d$.</li>
+              </ul>
+            </div>
+
+            <!-- Figure 4 (Good vs Bad) -->
+            <figure class="report-figure">
+              <img src="figure4.png" alt="Bad vs. Good Happy Diagonals">
+              <figcaption>Figure 3: Classification of shared diagonals. Left: A bad happy diagonal, where adjacent edges emanate to opposite sides in $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$. Right: A good happy diagonal, where adjacent edges continue in the same local orientation.</figcaption>
+            </figure>
+
+            <p>
+              The authors prove that <strong>every bad happy diagonal must be removed</strong> in any valid flip sequence, whereas for any subpath of consecutive happy edges containing at least one good happy diagonal, there exists an optimal flip sequence that completely preserves all edges of that subpath.
+            </p>
+          </section>
+
+          <!-- SECTION 4 -->
+          <section class="report-section">
+            <h3>4. The Four Cases and the Linear-Time Algorithm</h3>
+            <p>
+              Let $k$ and $l$ denote the number of diagonals in $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$, respectively. The flip distance between any two paths is governed by four structural cases:
+            </p>
+
+            <div class="math-box theorem">
+              <span class="math-box-title">Theorem 4.1 (Flip Distance Formula)</span>
+              <ul class="report-list">
+                <li><strong>Case 1 (Good Happy Diagonals Exist):</strong> If $m \ge 1$ is the maximal number of good happy diagonals in a contiguous subpath of shared edges:
+                  $$\mathrm{dist}(P_{\mathrm{in}}, P_{\mathrm{tar}}) = k + l - 2m$$
+                </li>
+                <li><strong>Case 2a (Type 3 Exchange):</strong> If $m = 0$, but one initial diagonal and one target diagonal can <em>eventually</em> be exchanged by a single Type 3 flip after removing the other $k-1$ diagonals:
+                  $$\mathrm{dist}(P_{\mathrm{in}}, P_{\mathrm{tar}}) = (k - 1) + 1 + (l - 1) = k + l - 1$$
+                </li>
+                <li><strong>Case 2b (Common Boundary Gap):</strong> If no Type 3 flip is possible, but both paths share a common gap $g = (v_i, v_{i+1})$ on the boundary (an edge absent from both paths), all diagonals can be flipped to boundary edges matching at $g$:
+                  $$\mathrm{dist}(P_{\mathrm{in}}, P_{\mathrm{tar}}) = k + l$$
+                </li>
+                <li><strong>Case 2c (Fallback):</strong> Otherwise, all diagonals must be removed, the boundary realigned via a Type 2 flip, and the new diagonals inserted:
+                  $$\mathrm{dist}(P_{\mathrm{in}}, P_{\mathrm{tar}}) = k + l + 1$$
+                </li>
+              </ul>
+            </div>
+
+            <!-- Figure 8 (Cases) -->
+            <figure class="report-figure">
+              <img src="figure8.png" alt="Visualization of Theorem 4.1 cases">
+              <figcaption>Figure 4: Visualization of Theorem 4.1. Top row: Initial path $P_{\mathrm{in}}$. Second row: Target configurations for Case 1, Case 2a, Case 2b, and Case 2c. Bottom row: The intermediate boundary configurations reached during reconfiguration.</figcaption>
+            </figure>
+
+            <h4>The $\mathcal{O}(n)$ Algorithm without State-Space Search</h4>
+            <p>
+              The algorithm represents paths using two cyclic neighbor arrays $I[0 \dots n-1]$ and $T[0 \dots n-1]$, and a boolean boundary array $C[0 \dots n-1]$:
+            </p>
+            <ol class="report-ordered-list">
+              <li><strong>Pass 1 (Case 1):</strong> Traverses $P_{\mathrm{in}}$ to count diagonals ($k, l$), identify shared edges in $\mathcal{O}(1)$ via $T$, and compute $m$ along contiguous runs of good happy diagonals.</li>
+              <li><strong>Pass 2 (Case 2a):</strong> If $m = 0$, checks for each initial diagonal $(v_i, v_j)$ in constant time whether a rotated counterpart $(v_{i-1}, v_{j+1})$ or $(v_{i+1}, v_{j-1})$ exists in $P_{\mathrm{tar}}$ with opposite local orientation.</li>
+              <li><strong>Pass 3 (Case 2b):</strong> If Case 2a fails, marks $C[i]$ for each boundary edge in $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$. A linear scan of $C$ finds any unmarked entry, which signals a common convex hull gap.</li>
+              <li><strong>Pass 4 (Case 2c):</strong> If no boundary gap exists, Case 2c applies directly.</li>
+            </ol>
+            <p>
+              Because each check executes in $\mathcal{O}(1)$ time per edge, the overall algorithm computes the exact flip distance and constructs the minimum sequence in <strong>$\mathcal{O}(n)$ time and $\mathcal{O}(n)$ space</strong>.
+            </p>
+          </section>
+        </div>
+      </article>
+
+      <!-- CARTE 02 : BIBLIOGRAPHIE -->
+      <section class="content-card sources" aria-labelledby="sources-title">
+        <div class="section-heading compact">
+          <span>02</span>
+          <div><p class="kicker">Bibliography</p><h2 id="sources-title">Sources</h2></div>
+        </div>
+        <ol class="biblio-list">
+          <li>
+            O. Aichholzer and J. Dorfer. <cite>A Linear Time Algorithm for Finding Minimum Flip Sequences between Plane Spanning Paths in Convex Point Sets.</cite> EuroCG 2025. Full extended preprint: <a href="https://arxiv.org/abs/2507.02740" target="_blank" rel="noopener noreferrer">arXiv:2507.02740 [cs.CG]</a> (2025).
+          </li>
+          <li>
+            O. Aichholzer, K. Knorr, W. Mulzer, J. Obenaus, R. Paul, and B. Vogtenhuber. <cite>Flipping Plane Spanning Paths.</cite> WALCOM 2023, LNCS vol. 13947, pp. 49–60. <a href="https://arxiv.org/abs/2202.10831" target="_blank" rel="noopener noreferrer">arXiv:2202.10831</a>.
+          </li>
+          <li>
+            P. Bose and F. Hurtado. <cite>Flips in Planar Graphs.</cite> Computational Geometry: Theory and Applications, 42(1):60–80 (2009). <a href="https://doi.org/10.1016/j.comgeo.2008.04.001" target="_blank" rel="noopener noreferrer">DOI: 10.1016/j.comgeo.2008.04.001</a>.
+          </li>
+        </ol>
+      </section>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- ONGLET 02 : TRY IT (INTERACTIVE EXPERIMENTS)                              -->
+    <!-- ========================================================================= -->
+    <section class="tab-panel" id="practice" role="tabpanel" aria-labelledby="practice-tab" hidden>
+      <div class="hero practice-hero">
+        <h1>Experiment with plane spanning paths</h1>
+        <p class="hero-summary">In this section, you'll be able to try out the few concepts you just learned. To make it as clear as possible, you'll be guided through each activity with visual feedback.</p>
+      </div>
+
+      <div class="demo-stack">
+        <!-- ACTIVITÉ 01 -->
+        <section class="demo-zone" id="sandbox-demo">
+          <div class="demo-copy">
+            <p class="demo-number">Activity 01</p>
+            <h2>Manual Reconfiguration</h2>
+            <p>Modify the initial path to reach the target path by using the minimum number of flips. Each flip must be valid.</p>
+          </div>
+
+          <div class="sandbox-wrapper">
+            <div id="sandbox-canvas-container"></div>
+
+            <div class="sandbox-controls">
+              <div class="stats-group">
+                <span>Flips : <strong id="reconfig-flips-count" class="highlight-cyan">0</strong></span>
+                <span class="separator">|</span>
+                <span>Optimal : <strong id="reconfig-optimal-count" class="highlight-rose">--</strong></span>
+              </div>
+
+              <div class="btn-group">
+                <button id="reconfig-btn-reset" class="btn btn-secondary">Reset</button>
+                <button id="reconfig-btn-new" class="btn btn-primary">New Puzzle</button>
+              </div>
+            </div>
+
+            <div id="reconfig-status-msg" class="sandbox-feedback">
+              Click a blue edge to start
+            </div>
+          </div>
+        </section>
+
+        <!-- ACTIVITÉ 02 -->
+        <section class="demo-zone" id="counterexample-demo">
+          <div class="demo-copy">
+            <p class="demo-number">Activity 02</p>
+            <h2>The Happy Edge Paradox</h2>
+            <p>Explore the complete configuration space of 8 plane spanning paths. Trace your trajectory across the flip graph to discover the paper's counterexample to the happy edge property.</p>
+          </div>
+          <div class="canvas-mount split-mount" id="counterexample-canvas" aria-label="Four-point counterexample canvas">
+            <span>Canvas + flip graph mount point</span>
+          </div>
+        </section>
+
+        <!-- ACTIVITÉ 03 -->
+        <section class="demo-zone" id="algorithm-demo">
+          <div class="demo-copy">
+            <p class="demo-number">Activity 03</p>
+            <h2>The Linear-Time Solver</h2>
+            <p>Watch how the algorithm manages to find the minimum flip sequence in linear time through this step-by-step animation.</p>
+          </div>
+          <div class="canvas-mount" id="algorithm-canvas" aria-label="Algorithm visualization canvas">
+            <span>Algorithm visualization mount point</span>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>INFO-F420 · Computational Geometry · 2026–2027</p>
+  </footer>
+
+  <script src="flip-algorithm.js"></script>
+  <script src="reconfiguration.js"></script>
+</body>
+</html>
