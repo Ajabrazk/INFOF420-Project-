@@ -1,9 +1,9 @@
-# INFO-F420: Computational Geometry — Project
+# INFO-F420: Computational Geometry — Project - 2026/2027
 
 **Topic:** Reconfiguration of Plane Spanning Paths via Flips on Convex Point Sets  
-**Main Paper:** O. Aichholzer & J. Dorfer (EuroCG 2025 / arXiv:2507.02740) | https://arxiv.org/abs/2507.02740
-**Author:** Anwar Jabrazko (Individual Project — 2026–2027)  
+**Main Paper:** O. Aichholzer & J. Dorfer (EuroCG 2025 / arXiv:2507.02740) | https://arxiv.org/abs/2507.02740 
 **Live Website:** https://ajabrazk.github.io/INFOF420-Project-/
+**Author:** Anwar Jabrazko
 
 ## How to Run Locally
 This is a static web application (HTML/CSS/JavaScript with p5.js and MathJax loaded via CDN). No installation or build step is required:
