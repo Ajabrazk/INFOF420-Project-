@@ -99,26 +99,33 @@ const visualSolverSketch = (p) => {
 
   function drawActivePath(path) {
     const edges = FlipAlgorithm.pathToEdges(path);
+    const targetEdgesSet = new Set(FlipAlgorithm.pathToEdges(targetPath).map(e => `${Math.min(e[0], e[1])}-${Math.max(e[0], e[1])}`));
 
     // Identifier l'arête qui vient d'être ajoutée lors de cette étape (s'il y en a une)
     let addedEdgeKey = null;
     if (currentStep > 0 && sequence[currentStep - 1]) {
-      const prevEdges = new Set(FlipAlgorithm.pathToEdges(sequence[currentStep - 1]).map(e => `${e[0]}-${e[1]}`));
-      const found = edges.find(e => !prevEdges.has(`${e[0]}-${e[1]}`));
-      if (found) addedEdgeKey = `${found[0]}-${found[1]}`;
+      const prevEdges = new Set(FlipAlgorithm.pathToEdges(sequence[currentStep - 1]).map(e => `${Math.min(e[0], e[1])}-${Math.max(e[0], e[1])}`));
+      const found = edges.find(e => !prevEdges.has(`${Math.min(e[0], e[1])}-${Math.max(e[0], e[1])}`));
+      if (found) addedEdgeKey = `${Math.min(found[0], found[1])}-${Math.max(found[0], found[1])}`;
     }
 
     for (const [u, v] of edges) {
       const p1 = getVertexPos(u);
       const p2 = getVertexPos(v);
-      const k = `${u}-${v}`;
+      const k = `${Math.min(u, v)}-${Math.max(u, v)}`;
+      const isHappy = targetEdgesSet.has(k);         // Arête partagée avec la cible
+      const isNewlyAdded = (k === addedEdgeKey);     // Vient d'être ajoutée par ce flip
 
-      if (k === addedEdgeKey) {
-        // Arête qui vient d'être insérée par le flip : vert émeraude
-        p.stroke(52, 211, 153);
+      if (isHappy) {
+        // Déjà présente dans la cible (Happy Edge / Cible validée) : Vert émeraude !
+        p.stroke(16, 185, 129);
+        p.strokeWeight(isNewlyAdded ? 4 : 3);
+      } else if (isNewlyAdded) {
+        // Arête intermédiaire qui vient d'être ajoutée (ex: transition sur le bord) : Jaune vif
+        p.stroke(251, 191, 36);
         p.strokeWeight(3.5);
       } else {
-        // Arête normale du chemin courant : bleu cyan
+        // Arête temporaire non présente dans la cible : Bleu cyan
         p.stroke(56, 189, 248);
         p.strokeWeight(2.5);
       }
