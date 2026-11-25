@@ -109,7 +109,7 @@ h1 { margin: 16px 0 22px; font-size: clamp(2.45rem, 5.5vw, 4.8rem); line-height:
 /* --- STYLES DU RAPPORT THÉORIQUE (ONGLET LEARN IT) ---                     */
 /* ========================================================================= */
 .report-body {
-  max-width: 860px;
+  max-width: 1050px;
   margin-left: auto;
 }
 
@@ -401,4 +401,187 @@ footer {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* Panneau d'analyse pour le solveur (Activité 03) */
+.solver-analysis-panel {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(8, 21, 43, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.analysis-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.case-badge {
+  background: var(--blue-500);
+  color: var(--navy-950);
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.solver-desc {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.sandbox-wrapper canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+/* Figure 1 : les trois types de flips */
+.report-figure img[src="./res/figure1.png"] {
+  width: 65%;
+}
+
+/* Figure 2 : le flip graph sur 4 sommets */
+.report-figure img[src="./res/figure2.png"] {
+  width: 65%;
+}
+
+/* Figure 3 dans le rapport : good vs. bad happy diagonals */
+.report-figure img[src="./res/figure4.png"] {
+  width: 70%;
+}
+
+/* Figure 4 dans le rapport : les quatre cas */
+.report-figure img[src="./res/figure8.png"] {
+  width: 65%;
+}
+
+/* Transition between the Learn and Try sections */
+.theory-conclusion {
+  margin-top: 48px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(125, 160, 205, 0.18);
+  text-align: center;
+}
+
+.theory-conclusion h3 {
+  margin: 0 0 12px;
+  color: var(--cyan-400);
+  font-size: 1.1rem;
+}
+
+.theory-conclusion p {
+  max-width: 700px;
+  margin: 0 auto 20px;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* Button leading from Learn to Try */
+.theory-try-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  min-width: 220px;
+  padding: 16px 30px;
+
+  color: #eaffff;
+  font: inherit;
+  font-size: 1.125rem;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(34, 211, 238, 0.22),
+      rgba(20, 184, 166, 0.12)
+    );
+
+  border: 1px solid rgba(94, 234, 212, 0.5);
+  border-radius: 999px;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  cursor: pointer;
+  overflow: hidden;
+
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.theory-try-button:hover {
+  transform: translateY(-3px);
+
+  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    rgba(34, 211, 238, 0.30),
+    rgba(20, 184, 166, 0.20)
+  );
+
+  border-color: rgba(103, 232, 249, 0.75);
+
+  /* Ombre naturelle, sans effet lumineux */
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.theory-try-button:hover::before {
+  transform: translateX(120%);
+}
+
+.theory-try-button:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.25),
+    inset 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.theory-try-button:focus-visible {
+  outline: 3px solid rgba(103, 232, 249, 0.35);
+  outline-offset: 4px;
+}
+
+/* Arrow */
+.theory-try-button span {
+  position: relative;
+  z-index: 1;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  color: #06121f;
+  font-size: 1rem;
+  line-height: 1;
+
+  background: #67e8f9;
+  border-radius: 50%;
+
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.theory-try-button:hover span {
+  transform: translateX(4px);
+  background: #99f6e4;
 }

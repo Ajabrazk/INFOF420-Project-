@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Interactive report on minimum flip sequences between plane spanning paths in convex point sets.">
   <title>Minimum Flip Sequences | INFO-F420</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="navigation.js" defer></script>
+  <link rel="stylesheet" href="./frontend/style.css">
+  <script src="./frontend/navigation.js" defer></script>
   <script>
     window.MathJax = {
       tex: {
@@ -26,9 +26,9 @@
 
     <nav class="tabs" aria-label="Main navigation" role="tablist">
       <button class="tab-button is-active" id="theory-tab" type="button" role="tab"
-        aria-selected="true" aria-controls="theory" data-tab="theory">Learn It</button>
+        aria-selected="true" aria-controls="theory" data-tab="theory">Learn</button>
       <button class="tab-button" id="practice-tab" type="button" role="tab"
-        aria-selected="false" aria-controls="practice" data-tab="practice">Try It</button>
+        aria-selected="false" aria-controls="practice" data-tab="practice">Try</button>
     </nav>
 
     <p class="student-name">Anwar Jabrazko</p>
@@ -79,7 +79,7 @@
 
             <!-- Figure 1 -->
             <figure class="report-figure">
-              <img src="figure1.png" alt="Illustration of Type 1, Type 2, and Type 3 flips">
+              <img src="./res/figure1.png" alt="Illustration of Type 1, Type 2, and Type 3 flips">
               <figcaption>Figure 1: The three elementary types of flips. (a) Type 1 reverses a subpath; (b) Type 2 closes a non-crossing cycle and opens it elsewhere; (c) Type 3 adds an edge crossing and replacing exactly one existing edge.</figcaption>
             </figure>
 
@@ -100,7 +100,7 @@
 
             <!-- Figure 2 -->
             <figure class="report-figure">
-              <img src="figure2.png" alt="The 8-state flip graph on 4 convex vertices">
+              <img src="./res/figure2.png" alt="The 8-state flip graph on 4 convex vertices">
               <figcaption>Figure 2: The complete flip graph of all 8 plane spanning paths on 4 vertices. $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$ share the diagonal $(v_0, v_2)$, but every transition path between them must temporarily destroy that shared diagonal.</figcaption>
             </figure>
 
@@ -109,7 +109,7 @@
             </p>
             <ul class="report-list">
               <li>$P_{\mathrm{in}} = (v_1, v_0, v_2, v_3)$, containing edges $(v_1, v_0)$, $(v_0, v_2)$, and $(v_2, v_3)$.</li>
-              <li>$P_{\mathrm{tar}} = (v_0, v_2, v_1, v_3)$, containing edges $(v_0, v_2)$, $(v_2, v_1)$, and $(v_1, v_3)$.</li>
+              <li>$P_{\mathrm{tar}} = (v_3, v_0, v_2, v_1)$, containing edges $(v_3, v_0)$, $(v_0, v_2)$, and $(v_2, v_1)$.</li>
             </ul>
             <p>
               Both configurations share the internal diagonal $(v_0, v_2)$. However, as shown by inspecting the flip graph (Figure 2), $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$ cannot reach each other in a single flip, and none of the other six paths in the configuration space contains $(v_0, v_2)$. Consequently, <strong>every</strong> valid sequence of flips connecting $P_{\mathrm{in}}$ to $P_{\mathrm{tar}}$ must temporarily remove the shared diagonal and reintroduce it later. Greedy algorithms that attempt to preserve shared edges can thus lead to dead ends.
@@ -147,7 +147,7 @@
 
             <!-- Figure 4 (Good vs Bad) -->
             <figure class="report-figure">
-              <img src="figure4.png" alt="Bad vs. Good Happy Diagonals">
+              <img src="./res/figure4.png" alt="Bad vs. Good Happy Diagonals">
               <figcaption>Figure 3: Classification of shared diagonals. Left: A bad happy diagonal, where adjacent edges emanate to opposite sides in $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$. Right: A good happy diagonal, where adjacent edges continue in the same local orientation.</figcaption>
             </figure>
 
@@ -183,7 +183,7 @@
 
             <!-- Figure 8 (Cases) -->
             <figure class="report-figure">
-              <img src="figure8.png" alt="Visualization of Theorem 4.1 cases">
+              <img src="./res/figure8.png" alt="Visualization of Theorem 4.1 cases">
               <figcaption>Figure 4: Visualization of Theorem 4.1. Top row: Initial path $P_{\mathrm{in}}$. Second row: Target configurations for Case 1, Case 2a, Case 2b, and Case 2c. Bottom row: The intermediate boundary configurations reached during reconfiguration.</figcaption>
             </figure>
 
@@ -193,13 +193,35 @@
             </p>
             <ol class="report-ordered-list">
               <li><strong>Pass 1 (Case 1):</strong> Traverses $P_{\mathrm{in}}$ to count diagonals ($k, l$), identify shared edges in $\mathcal{O}(1)$ via $T$, and compute $m$ along contiguous runs of good happy diagonals.</li>
-              <li><strong>Pass 2 (Case 2a):</strong> If $m = 0$, checks for each initial diagonal $(v_i, v_j)$ in constant time whether a rotated counterpart $(v_{i-1}, v_{j+1})$ or $(v_{i+1}, v_{j-1})$ exists in $P_{\mathrm{tar}}$ with opposite local orientation.</li>
+              <li><strong>Pass 2 (Case 2a):</strong> If $m = 0$, checks for each initial diagonal $(v_i, v_j)$ in constant time whether a rotated counterpart $(v_{i-1}, v_{j-1})$ or $(v_{i+1}, v_{j+1})$ exists in $P_{\mathrm{tar}}$ with compatible local orientation.</li>
               <li><strong>Pass 3 (Case 2b):</strong> If Case 2a fails, marks $C[i]$ for each boundary edge in $P_{\mathrm{in}}$ and $P_{\mathrm{tar}}$. A linear scan of $C$ finds any unmarked entry, which signals a common convex hull gap.</li>
               <li><strong>Pass 4 (Case 2c):</strong> If no boundary gap exists, Case 2c applies directly.</li>
             </ol>
             <p>
               Because each check executes in $\mathcal{O}(1)$ time per edge, the overall algorithm computes the exact flip distance and constructs the minimum sequence in <strong>$\mathcal{O}(n)$ time and $\mathcal{O}(n)$ space</strong>.
             </p>
+          </section>
+          <section class="theory-conclusion" aria-labelledby="theory-conclusion-title">
+            <h3 id="theory-conclusion-title">
+              Ready to put the theory into practice?
+            </h3>
+
+            <p>
+              Now that you have a clear understanding of plane spanning paths,
+              elementary flips, the happy edge paradox, and the linear-time
+              algorithm, you can put your knowledge into practice through the
+              interactive activities available in the <strong>Try</strong>
+              section.
+            </p>
+
+            <button
+              id="go-to-practice"
+              class="btn btn-primary theory-try-button"
+              type="button"
+            >
+              Go to activities
+              <span aria-hidden="true">→</span>
+            </button>
           </section>
         </div>
       </article>
@@ -265,26 +287,74 @@
         </section>
 
         <!-- ACTIVITÉ 02 -->
+        <!-- ACTIVITÉ 02 -->
         <section class="demo-zone" id="counterexample-demo">
           <div class="demo-copy">
             <p class="demo-number">Activity 02</p>
             <h2>The Happy Edge Paradox</h2>
             <p>Explore the complete configuration space of 8 plane spanning paths. Trace your trajectory across the flip graph to discover the paper's counterexample to the happy edge property.</p>
           </div>
-          <div class="canvas-mount split-mount" id="counterexample-canvas" aria-label="Four-point counterexample canvas">
-            <span>Canvas + flip graph mount point</span>
+
+          <div class="sandbox-wrapper">
+            <!-- Emplacement du canvas p5.js -->
+            <div id="counterexample-canvas-container"></div>
+
+            <!-- Barre de contrôle pour explorer le contre-exemple -->
+            <div class="sandbox-controls">
+              <div class="stats-group">
+                <span>Active State: <strong id="he-current-state" class="highlight-cyan">P_in</strong></span>
+              </div>
+              <div class="btn-group">
+                <button id="he-btn-prev" class="btn btn-secondary">◀ Prev</button>
+                <button id="he-btn-next" class="btn btn-primary">Next Step ▶</button>
+                <button id="he-btn-reset" class="btn btn-secondary">Reset (Pin)</button>
+              </div>
+            </div>
+
+            <!-- Explication dynamique de l'étape -->
+            <div id="he-status-msg" class="sandbox-feedback">
+              Step 0: Initial configuration.
+            </div>
           </div>
         </section>
-
         <!-- ACTIVITÉ 03 -->
         <section class="demo-zone" id="algorithm-demo">
           <div class="demo-copy">
             <p class="demo-number">Activity 03</p>
             <h2>The Linear-Time Solver</h2>
-            <p>Watch how the algorithm manages to find the minimum flip sequence in linear time through this step-by-step animation.</p>
+            <p>Watch how the algorithm analyzes diagonals and applies Theorem 4.1 to determine the optimal flip sequence step-by-step.</p>
           </div>
-          <div class="canvas-mount" id="algorithm-canvas" aria-label="Algorithm visualization canvas">
-            <span>Algorithm visualization mount point</span>
+
+          <div class="sandbox-wrapper">
+            <!-- Emplacement du canvas p5.js -->
+            <div id="solver-canvas-container"></div>
+
+            <!-- Panneau d'explication mathématique du Théorème 4.1 -->
+            <div class="solver-analysis-panel">
+              <div class="analysis-header">
+                <span id="solver-case-badge" class="case-badge">Case 1</span>
+                <span id="solver-formula" class="highlight-cyan font-bold">Distance: --</span>
+              </div>
+              <p id="solver-explanation" class="solver-desc">Analyzing...</p>
+            </div>
+
+            <!-- Barre de contrôle du lecteur d'animation -->
+            <div class="sandbox-controls">
+              <div class="stats-group">
+                <span>Step: <strong id="solver-step-num" class="highlight-cyan">0</strong> / <span id="solver-step-total">0</span></span>
+              </div>
+
+              <div class="btn-group">
+                <button id="solver-btn-prev" class="btn btn-secondary">◀ Prev</button>
+                <button id="solver-btn-play" class="btn btn-primary">▶ Play</button>
+                <button id="solver-btn-next" class="btn btn-secondary">Next ▶</button>
+                <button id="solver-btn-new" class="btn btn-secondary">New Paths</button>
+              </div>
+            </div>
+
+            <div id="solver-step-desc" class="sandbox-feedback">
+              Step 0: Initial configuration.
+            </div>
           </div>
         </section>
       </div>
@@ -292,10 +362,13 @@
   </main>
 
   <footer>
-    <p>INFO-F420 · Computational Geometry · 2026–2027</p>
+    <p>INFO-F420 · Computational Geometry · 2026–2027 · Anwar Jabrazko · <a href="https://github.com/Ajabrazk/INFOF420-Project-" target="_blank" style="color: var(--cyan-400);">GitHub Repository ↗</a></p>
   </footer>
 
-  <script src="flip-algorithm.js"></script>
-  <script src="reconfiguration.js"></script>
+  <script src="./backend/flip-algorithm.js"></script>
+  <script src="./backend/reconfiguration.js"></script>
+  <script src="./backend/visual-solver.js"></script>
+  <script src="./backend/happyedge.js"></script>
+  
 </body>
 </html>

@@ -49,3 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const requestedTab = tabs.find((tab) => `#${tab.dataset.tab}` === window.location.hash);
   if (requestedTab) activateTab(requestedTab);
 });
+
+const goToPracticeButton = document.getElementById("go-to-practice");
+
+goToPracticeButton?.addEventListener("click", () => {
+  document.getElementById("practice-tab").click();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});

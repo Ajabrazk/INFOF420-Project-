@@ -201,26 +201,29 @@ const FlipAlgorithm = (() => {
     let explanation = "";
 
     if (m >= 1) {
+      // Case 1: At least one good happy diagonal in a contiguous subpath
       detectedCase = "Case 1";
       distance = k + l - 2 * m;
-      explanation = `Cas 1 détecté : Il existe un sous-chemin continu avec m = ${m} bonne(s) diagonale(s) commune(s). Distance = k + l - 2m = ${k} + ${l} - 2(${m}) = ${distance}.`;
+      explanation = `Case 1 detected: Contiguous subpath with m = ${m} good happy diagonal(s). Distance = k + l - 2m = ${k} + ${l} - 2(${m}) = ${distance}.`;
     } else {
-      // Aucune bonne diagonale commune (m = 0)
+      // Case 2: No good happy diagonals (m = 0)
       const commonGap = findCommonBoundaryGap(edgesIn, edgesTar, n);
-      const canDoType3 = checkType3Possibility(edgesIn, edgesTar, n);
-
+      const canDoType3 = checkType3Possibility(Pin, Ptar, edgesIn, setTar, n);
       if (canDoType3) {
+        // Case 2a: Type 3 exchange possible
         detectedCase = "Case 2a";
         distance = k + l - 1;
-        explanation = `Cas 2a détecté : Une paire de diagonales peut être directement échangée via un flip de Type 3. Distance = k + l - 1 = ${distance}.`;
+        explanation = `Case 2a detected: A pair of diagonals can eventually be exchanged via a Type 3 flip. Distance = (k - 1) + 1 + (l - 1) = k + l - 1 = ${distance}.`;
       } else if (commonGap !== null) {
+        // Case 2b: Common gap on convex hull boundary
         detectedCase = "Case 2b";
         distance = k + l;
-        explanation = `Cas 2b détecté : Présence d'un "gap" commun sur l'enveloppe convexe en (${commonGap[0]}, ${commonGap[1]}). Distance = k + l = ${distance}.`;
+        explanation = `Case 2b detected: Common convex hull boundary gap at (${commonGap[0]}, ${commonGap[1]}). Distance = k + l = ${k} + ${l} = ${distance}.`;
       } else {
+        // Case 2c: General fallback
         detectedCase = "Case 2c";
         distance = k + l + 1;
-        explanation = `Cas 2c détecté : Aucun gap commun ni échange Type 3 possible. Distance = k + l + 1 = ${distance}.`;
+        explanation = `Case 2c detected: No common boundary gap or Type 3 exchange available. Boundary realignment required. Distance = k + l + 1 = ${k} + ${l} + 1 = ${distance}.`;
       }
     }
 
@@ -248,16 +251,23 @@ const FlipAlgorithm = (() => {
     return null;
   }
 
-  function checkType3Possibility(edgesIn, edgesTar, n) {
-    const diagIn = edgesIn.filter(e => isDiagonal(e[0], e[1], n));
-    const diagTar = edgesTar.filter(e => isDiagonal(e[0], e[1], n));
+  function checkType3Possibility(Pin, Ptar, edgesIn, setTar, n) {
+    for (const [u, v] of edgesIn) {
+      if (!isDiagonal(u, v, n)) continue;
+      const [i, j] = normalizeEdge(u, v);
+      const nbI = getAdjacentNeighbor(Pin, i, j);
+      if (nbI === null) continue;
 
-    for (const [u1, v1] of diagIn) {
-      for (const [u2, v2] of diagTar) {
-        if (
-          (u2 === (u1 + 1) % n && v2 === (v1 - 1 + n) % n) ||
-          (u2 === (u1 - 1 + n) % n && v2 === (v1 + 1) % n)
-        ) {
+      const inside = isBetweenClockwise(nbI, i, j);
+      const a = inside ? (i - 1 + n) % n : (i + 1) % n;
+      const b = inside ? (j - 1 + n) % n : (j + 1) % n;
+      const [lo, hi] = normalizeEdge(a, b);
+      const d2Key = edgeKey(lo, hi);
+
+      if (isDiagonal(lo, hi, n) && setTar.has(d2Key)) {
+        const expectedW = inside ? (j - 2 + n) % n : (j + 2) % n;
+        const nbTar = getAdjacentNeighbor(Ptar, b, a);
+        if (nbTar !== null && isBetweenClockwise(expectedW, lo, hi) === isBetweenClockwise(nbTar, lo, hi)) {
           return true;
         }
       }
