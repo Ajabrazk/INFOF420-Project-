@@ -102,29 +102,34 @@ const reconfigurationSketch = (p) => {
 
   function drawCurrentPathWithHover() {
     const edges = FlipAlgorithm.pathToEdges(currentPath);
+    const targetEdgesSet = new Set(FlipAlgorithm.pathToEdges(targetPath).map(e => `${e[0]}-${e[1]}`));
     const mouseEdgeIdx = getHoveredEdgeIndex(edges);
 
     for (let i = 0; i < edges.length; i++) {
       const [u, v] = edges[i];
       const p1 = getVertexPos(u);
       const p2 = getVertexPos(v);
+      const key = `${Math.min(u, v)}-${Math.max(u, v)}`;
+      const isHappy = targetEdgesSet.has(key); // L'arête est-elle partagée avec la cible ?
 
       if (i === selectedEdgeIndex) {
-        // Arête sélectionnée pour être retirée (jaune/orange vif)
+        // Sélectionnée pour suppression : jaune vif
         p.stroke(251, 191, 36);
         p.strokeWeight(4);
-        p.line(p1.x, p1.y, p2.x, p2.y);
       } else if (i === mouseEdgeIdx && selectedEdgeIndex === -1 && !isSolved) {
-        // Survol avec la souris
-        p.stroke(147, 197, 253);
+        // Survol souris
+        p.stroke(255, 255, 255);
         p.strokeWeight(3.5);
-        p.line(p1.x, p1.y, p2.x, p2.y);
+      } else if (isHappy) {
+        // Déjà présente dans la cible (Happy Edge) : Vert émeraude !
+        p.stroke(16, 185, 129);
+        p.strokeWeight(2.8);
       } else {
-        // Arête normale du joueur
+        // Présente UNIQUEMENT dans ton chemin (à éliminer) : Bleu cyan !
         p.stroke(56, 189, 248);
         p.strokeWeight(2.5);
-        p.line(p1.x, p1.y, p2.x, p2.y);
       }
+      p.line(p1.x, p1.y, p2.x, p2.y);
     }
   }
 
