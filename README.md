@@ -11,7 +11,7 @@ This is a static web application (HTML/CSS/JavaScript with p5.js and MathJax loa
 2. Open `index.html` directly in any modern web browser (Chrome, Firefox, Edge, Safari), or launch it using VS Code's *Live Server* extension.
 
 ## Project Structure
-- `index.html` & `style.css` — Layout, theoretical report (*Learn It*), and interactive lab (*Try It*).
+- `index.html` & `style.css` — Layout, theoretical report (*Learn*), and interactive lab (*Try*).
 - `navigation.js` — Tab switching logic.
 - `flip-algorithm.js` — Geometric predicates, Theorem 4.1 $\mathcal{O}(n)$ distance classification, and optimal sequence solver.
 - `reconfiguration.js` — Activity 01: Manual reconfiguration sandbox.
