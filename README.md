@@ -11,10 +11,10 @@ This is a static web application (HTML/CSS/JavaScript with p5.js and MathJax loa
 2. Open `index.html` directly in any modern web browser (Chrome, Firefox, Edge, Safari), or launch it using VS Code's *Live Server* extension.
 
 ## Project Structure
-- `index.html` & `style.css` — Layout, theoretical report (*Learn*), and interactive lab (*Try*).
-- `navigation.js` — Tab switching logic.
-- `flip-algorithm.js` — Geometric predicates, Theorem 4.1 $\mathcal{O}(n)$ distance classification, and optimal sequence solver.
-- `reconfiguration.js` — Activity 01: Manual reconfiguration sandbox.
-- `happyedge.js` — Activity 02: Interactive 4-vertex counterexample and 8-node flip graph.
-- `visual-solver.js` — Activity 03: Theorem 4.1 breakdown and step-by-step animation player.
-- `AI_JOURNAL.pdf` — Documentation of AI tools, significant prompts, and verification steps.
+- `index.html` & `./frontend/style.css` — Layout, theoretical report (*Learn*), and interactive lab (*Try*).
+- `./frontend/navigation.js` — Tab switching logic.
+- `./backend/flip-algorithm.js` — Geometric predicates, Theorem 4.1 $\mathcal{O}(n)$ distance classification, and optimal sequence solver.
+- `./backend/reconfiguration.js` — Activity 01: Manual reconfiguration sandbox.
+- `./backend/happyedge.js` — Activity 02: Interactive 4-vertex counterexample and 8-node flip graph.
+- `./backend/visual-solver.js` — Activity 03: Theorem 4.1 breakdown and step-by-step animation player.
+- `AI Journal.pdf` — Documentation of AI tools, significant prompts, and verification steps.
